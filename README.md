@@ -61,3 +61,4 @@ A complete, production-ready full-stack web application for plant disease detect
 4. Set the **Start Command** to: `uvicorn main:app --host 0.0.0.0 --port $PORT`
 5. Go to the Environment section and add all your API keys as Environment Variables.
 6. Deploy!
+j
