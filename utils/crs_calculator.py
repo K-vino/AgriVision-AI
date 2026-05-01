@@ -16,8 +16,8 @@ def calculate_crs(humidity: float, temp: float, wind_speed: float, cloud_cover: 
         risk_level = "MODERATE"
         
     return {
-        "crs_score": round(crs, 2),
-        "risk_level": risk_level,
+        "score": round(crs, 2),
+        "level": risk_level,
         "details": {
             "humidity_score": round(humidity_score, 2),
             "temp_score": round(temp_score, 2),

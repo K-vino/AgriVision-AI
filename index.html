@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriVision AI | Smart Farming Assistant</title>
+    <meta name="description" content="Plant disease detection and climate risk system for farmers.">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-text">
+                <h1 class="title">🌱 <span data-i18n="app_title">AgriVision AI</span></h1>
+                <p class="subtitle" data-i18n="app_subtitle">Smart Farming Assistant</p>
+            </div>
+            <button id="lang-toggle" class="lang-toggle" aria-label="Toggle Language">
+                <span id="lang-text">EN</span>
+                <i data-lucide="languages"></i>
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section id="input-section" class="card active">
+                <div class="step">
+                    <span class="step-badge">1</span>
+                    <h2 data-i18n="step_1_title">Upload Image</h2>
+                </div>
+                
+                <div class="upload-area" id="upload-area">
+                    <input type="file" id="image-input" accept="image/*" hidden>
+                    <div class="upload-placeholder" id="upload-placeholder">
+                        <i data-lucide="image-plus" class="upload-icon"></i>
+                        <p class="upload-text" data-i18n="upload_instruction">Tap to upload or take photo</p>
+                    </div>
+                    <img id="image-preview" class="image-preview hidden" alt="Uploaded plant image">
+                </div>
+
+                <div class="step mt-4">
+                    <span class="step-badge">2</span>
+                    <h2 data-i18n="step_2_title">Enter District</h2>
+                </div>
+                <div class="input-group">
+                    <i data-lucide="map-pin" class="input-icon"></i>
+                    <input type="text" id="district-input" placeholder="Enter your district" data-i18n-placeholder="district_placeholder">
+                </div>
+
+                <div class="step mt-4">
+                    <span class="step-badge">3</span>
+                    <h2 data-i18n="step_3_title">Get Results</h2>
+                </div>
+                <button id="analyze-btn" class="btn btn-primary" disabled>
+                    <i data-lucide="search"></i>
+                    <span data-i18n="analyze_button">Analyze</span>
+                </button>
+            </section>
+
+            <!-- Loading Section -->
+            <section id="loading-section" class="card hidden">
+                <div class="loader-container">
+                    <div class="spinner"></div>
+                    <div class="loading-steps">
+                        <p class="loading-step active" id="loading-step-1">🌿 <span data-i18n="loading_1">Detecting disease...</span></p>
+                        <p class="loading-step" id="loading-step-2">🤖 <span data-i18n="loading_2">AI analyzing...</span></p>
+                        <p class="loading-step" id="loading-step-3">🌦️ <span data-i18n="loading_3">Checking weather...</span></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="results-section" class="hidden">
+                <div class="results-header">
+                    <h2 data-i18n="results_title">Analysis Complete</h2>
+                    <button id="reset-btn" class="btn btn-secondary btn-sm">
+                        <i data-lucide="refresh-cw"></i>
+                        <span data-i18n="try_another">Try Another</span>
+                    </button>
+                </div>
+
+                <!-- Disease Card -->
+                <div class="result-card disease-card">
+                    <div class="card-icon"><i data-lucide="leaf"></i></div>
+                    <div class="card-content">
+                        <h3 data-i18n="disease_label">Plant Disease</h3>
+                        <p id="res-disease-name" class="result-value">Unknown</p>
+                        <div class="confidence-bar">
+                            <div id="res-confidence-fill" class="confidence-fill" style="width: 0%"></div>
+                        </div>
+                        <p class="confidence-text"><span id="res-confidence">0</span>% <span data-i18n="confidence_label">Confidence</span></p>
+                    </div>
+                </div>
+
+                <!-- Severity Card -->
+                <div class="result-card severity-card" id="res-severity-card">
+                    <div class="card-icon"><i data-lucide="alert-triangle"></i></div>
+                    <div class="card-content">
+                        <h3 data-i18n="severity_label">Severity</h3>
+                        <p id="res-severity" class="result-value">Unknown</p>
+                    </div>
+                </div>
+
+                <!-- Treatment Card -->
+                <div class="result-card treatment-card">
+                    <div class="card-icon"><i data-lucide="shield-plus"></i></div>
+                    <div class="card-content">
+                        <h3 data-i18n="treatment_label">Treatment Plan</h3>
+                        <ul id="res-treatment-list" class="treatment-list">
+                            <!-- Populated by JS -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Climate Risk Card -->
+                <div class="result-card climate-card" id="res-climate-card">
+                    <div class="card-icon"><i data-lucide="cloud-lightning"></i></div>
+                    <div class="card-content">
+                        <h3 data-i18n="climate_risk_label">Climate Risk</h3>
+                        <div class="climate-score-container">
+                            <div class="score-circle">
+                                <span id="res-climate-score">0</span>
+                            </div>
+                            <div class="climate-details">
+                                <p id="res-climate-level" class="result-value">Unknown</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Error Section -->
+            <div id="error-toast" class="toast hidden">
+                <i data-lucide="alert-circle"></i>
+                <span id="error-message">Error message</span>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

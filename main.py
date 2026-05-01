@@ -30,12 +30,20 @@ app.add_middleware(
 os.makedirs("temp", exist_ok=True)
 os.makedirs("model", exist_ok=True)
 
-# Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Mount static files for local testing
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 @app.get("/")
 async def root():
-    return FileResponse("static/index.html")
+    return FileResponse("index.html")
+
+@app.get("/app.js")
+async def get_js():
+    return FileResponse("app.js")
+
+@app.get("/styles.css")
+async def get_css():
+    return FileResponse("styles.css")
 
 @app.post("/analyze")
 async def analyze(file: UploadFile = File(...)):
