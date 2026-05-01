@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriVision AI - Plant Disease & Climate Risk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <header class="header">
+        <div class="logo">
+            <i class="fa-solid fa-leaf"></i>
+            <h1>AgriVision AI</h1>
+        </div>
+        <p class="subtitle">Advanced Plant Diagnostics & Climate Analysis</p>
+    </header>
+
+    <main class="container">
+        <section class="upload-section glass-card">
+            <h2><i class="fa-solid fa-upload"></i> Upload Leaf Image</h2>
+            
+            <div class="upload-area" id="uploadArea">
+                <input type="file" id="fileInput" accept="image/*" hidden>
+                <div class="upload-prompt" id="uploadPrompt">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <p>Drag & Drop or Click to Browse</p>
+                    <button class="btn btn-camera" id="cameraBtn"><i class="fa-solid fa-camera"></i> Use Camera</button>
+                </div>
+                <img id="imagePreview" class="image-preview hidden" alt="Preview">
+                <button class="btn-remove hidden" id="removeBtn"><i class="fa-solid fa-times"></i></button>
+            </div>
+
+            <!-- Camera Modal -->
+            <div id="cameraModal" class="modal hidden">
+                <div class="modal-content glass-card">
+                    <video id="videoElement" autoplay playsinline></video>
+                    <div class="modal-actions">
+                        <button class="btn btn-capture" id="captureBtn">Capture</button>
+                        <button class="btn btn-close" id="closeCameraBtn">Close</button>
+                    </div>
+                    <canvas id="canvasElement" class="hidden"></canvas>
+                </div>
+            </div>
+
+            <div class="district-input-group">
+                <label for="districtInput">District / City (for Climate Risk)</label>
+                <input type="text" id="districtInput" placeholder="e.g., London, New York, Mumbai" class="input-field">
+            </div>
+
+            <button class="btn btn-primary" id="analyzeBtn" disabled>
+                <span>Analyze Now</span>
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </button>
+        </section>
+
+        <!-- Loading State -->
+        <div class="loading-state hidden" id="loadingState">
+            <div class="loader"></div>
+            <p>AI is analyzing your plant...</p>
+        </div>
+
+        <!-- Results Section -->
+        <section class="results-section hidden" id="resultsSection">
+            <div class="grid-layout">
+                
+                <!-- Disease Result -->
+                <div class="result-card glass-card disease-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-microscope icon-disease"></i>
+                        <h3>Disease Analysis</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="result-row">
+                            <span class="label">Detection</span>
+                            <span class="value highlight" id="resDiseaseName">--</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="label">Severity</span>
+                            <span class="value badge" id="resSeverity">--</span>
+                        </div>
+                        <div class="result-row treatment-box">
+                            <span class="label">Treatment</span>
+                            <p id="resTreatment">--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plant Info Result -->
+                <div class="result-card glass-card plant-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-seedling icon-plant"></i>
+                        <h3>Plant Details</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="result-row">
+                            <span class="label">Common Name</span>
+                            <span class="value" id="resCommonName">--</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="label">Scientific Name</span>
+                            <span class="value italic" id="resScientificName">--</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="label">Watering</span>
+                            <span class="value" id="resWatering">--</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="label">Sunlight</span>
+                            <span class="value" id="resSunlight">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Climate Risk Result -->
+                <div class="result-card glass-card climate-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-cloud-sun-rain icon-climate"></i>
+                        <h3>Climate Risk</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="crs-meter">
+                            <svg viewBox="0 0 100 50" class="gauge">
+                                <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50"></path>
+                                <path class="gauge-value" id="crsPath" d="M 10 50 A 40 40 0 0 1 90 50" stroke-dasharray="125" stroke-dashoffset="125"></path>
+                            </svg>
+                            <div class="crs-score" id="resCrsScore">--</div>
+                        </div>
+                        <div class="result-row center">
+                            <span class="value badge badge-risk" id="resRiskLevel">--</span>
+                        </div>
+                        <div class="climate-factors">
+                            <div class="factor">
+                                <i class="fa-solid fa-temperature-half"></i> <span id="resTemp">--</span>
+                            </div>
+                            <div class="factor">
+                                <i class="fa-solid fa-droplet"></i> <span id="resHum">--</span>
+                            </div>
+                            <div class="factor">
+                                <i class="fa-solid fa-wind"></i> <span id="resWind">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
